@@ -22,6 +22,6 @@ int main(){
     file.close();
     cout << "Najvecja vsota je " << najvec << endl;
 
-    system("pause");
+    //system("pause");
     return 0;
 }
