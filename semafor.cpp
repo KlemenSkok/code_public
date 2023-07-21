@@ -7,6 +7,11 @@
 
 //using namespace std;
 
+//!	LINUX VERZIJA
+/*
+Za Windows OS nadomesti "unistd.h" z "windows.h" in namesto usleep(micros) uporabi Sleep(1000);
+*/
+
 #define GOTOXY(x, y) "\x1B[" #y ";" #x "H"
 
 const unsigned int micros = 1000000;
