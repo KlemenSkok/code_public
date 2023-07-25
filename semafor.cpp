@@ -80,7 +80,36 @@ class Krizisce{
             if(tmp.pesci)
                 std::cout << "--\033[102m  \033[m";
         }
-		
+	    void show(){
+	        std::cout << GOTOXY(1, 1);
+		    prikaziLuci(semafor[0]);
+		    std::cout << "\n\n";
+		    prikaziLuci(semafor[1]);
+		    std::cout << std::endl;
+	    }
+	    
+	    void emergencyStop(time_t& start){
+	        std::cout << GOTOXY(1, 4) << "EMERGENCY STOP";
+	        semafor[0].pesci = false;
+	        semafor[1].pesci = false;
+	        
+	        for(int i = 0; i < 2; i++){
+    	        if(semafor[i].zelena){
+    	            semafor[i].zelena = false;
+    	            semafor[i].rumena = true;
+    	        }
+	        }
+	        usleep(2 * micros);
+	        
+	        for(int i = 0; i <2; i++){
+    	        semafor[i].rumena = false;
+    	        semafor[i].rdeca = true;
+	        }
+	        usleep(10 * micros);
+	        start = time(0);
+	        std::cout << "\x1B[2J";
+	    }
+	    
 	public:
 		Krizisce(){
 			semReset(semafor[0]);
@@ -88,20 +117,29 @@ class Krizisce{
 		}
 		void run(){
 		    time_t start = time(0);
+		    int cajt, prev_cajt;
+		    bool em_stop = false;
+		    em_stop = false;
 		    while(true){
-			    int cajt = difftime(time(0), start);
-			    prizgiLuci(cajt%16, ((cajt/16)%2 == 1) ? 0:1);
-			    std::cout << GOTOXY(1, 1);
-			    prikaziLuci(semafor[0]);
-			    std::cout << "\n\n";
-			    prikaziLuci(semafor[1]);
-			    std::cout << std::endl;
-			    usleep(micros);
+		        prev_cajt = cajt;
+			    cajt = difftime(time(0), start);
+			    prizgiLuci(cajt%16, (cajt/16)%2);
+			    
+			    if(em_stop){
+                    emergencyStop(start);
+                    em_stop = false;
+			    }
+			    
+			    if(cajt != prev_cajt){
+			        show();
+			    }
 		    }
 		}
 };
 
 int main(){
+    
+    srand(time(NULL));
     
     Krizisce xyz;
     xyz.run();
@@ -127,5 +165,3 @@ _____________        ____________
 
 
 */
-
-
